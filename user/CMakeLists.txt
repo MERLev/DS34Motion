@@ -8,7 +8,7 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   endif()
 endif()
 
-project(dsmotion)
+project(ds34motion)
 include("${VITASDK}/share/vita.cmake" REQUIRED)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -Wall -O3 -nostdlib")
@@ -29,7 +29,7 @@ target_link_libraries(${PROJECT_NAME}.elf
   k
   gcc
   SceMotion_stub
-  dsmotion_stub
+  ds34motion_stub
 )
 
 set_target_properties(${PROJECT_NAME}.elf
@@ -38,5 +38,5 @@ set_target_properties(${PROJECT_NAME}.elf
 
 vita_create_self(${PROJECT_NAME}.suprx ${PROJECT_NAME}.elf
   UNSAFE
-  CONFIG ${CMAKE_SOURCE_DIR}/dsmotion.yml
+  CONFIG ${CMAKE_SOURCE_DIR}/ds34motion.yml
 )

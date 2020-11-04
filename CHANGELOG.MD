@@ -1,3 +1,8 @@
+## 1.3
+ * Moved all logic from user plugin to kernel
+ * Exported functions for other plugins to use
+ * Renamed, to destinguish from oldder versions
+ 
 ## 1.2
 
 User plugin changes:

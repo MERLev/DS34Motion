@@ -8,7 +8,7 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   endif()
 endif()
 
-project(dsmotion)
+project(ds34motion)
 include("${VITASDK}/share/vita.cmake" REQUIRED)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -Wall -O3 -nostdlib")
@@ -21,8 +21,8 @@ add_executable(${PROJECT_NAME}.elf
 target_link_libraries(${PROJECT_NAME}.elf
 	gcc
 	taihenForKernel_stub
-    SceThreadmgrForDriver_stub
-    SceModulemgrForKernel_stub
+  SceThreadmgrForDriver_stub
+  SceModulemgrForKernel_stub
 	SceSysclibForDriver_stub
 	SceSysmemForDriver_stub
 	SceSysmemForKernel_stub
@@ -36,15 +36,15 @@ set_target_properties(${PROJECT_NAME}.elf
 	COMPILE_FLAGS "-D__VITA_KERNEL__"
 )
 
-add_custom_target(${PROJECT_NAME}.skprx ALL
-	COMMAND vita-elf-create -e ${PROJECT_NAME}.yml ${PROJECT_NAME}.elf ${PROJECT_NAME}.velf
-	COMMAND vita-make-fself -c ${PROJECT_NAME}.velf ${PROJECT_NAME}.skprx
+vita_create_self(${PROJECT_NAME}.skprx ${PROJECT_NAME}.elf
+  UNSAFE
+  CONFIG ${PROJECT_NAME}.yml
 )
 add_dependencies(${PROJECT_NAME}.skprx ${PROJECT_NAME}.elf)
 
 vita_create_stubs(stubs ${PROJECT_NAME}.elf ${PROJECT_NAME}.yml KERNEL)
 
 install(DIRECTORY ${CMAKE_BINARY_DIR}/stubs/
-  DESTINATION ${CMAKE_BINARY_DIR}/../
+  DESTINATION lib
   FILES_MATCHING PATTERN "*.a"
 )

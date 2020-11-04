@@ -1,12 +1,12 @@
-# DSMotion
+# DS34Motion
 
 Henkaku plugins which adds motion control support for PlayStation TV with DualShock controllers
 
 It can also be used on a real PS Vita with "ds3vita" or "ds4vita" plugins to replace the console internal motion sensors by those from the controller (however, it doesn't work well with "ds3vita", see limitations section).
 
 There are 2 plugins:
- * Kernel plugin **dsmotion.skprx**: it hooks BlueTooth calls to catch DualShock controller packets and exposes user services to get the intercepted motion data
- * User plugin **dsmotion.suprx**: it calls the kernel plugin services and reinterprets the given data for SceMotion functions return
+ * Kernel plugin **ds34motion.skprx**: it hooks BlueTooth calls to catch DualShock controller packets and exposes user services to get the intercepted motion data
+ * User plugin **ds34motion.suprx**: it calls the kernel plugin services and reinterprets the given data for SceMotion functions return
 
 
 ### Installation
@@ -15,10 +15,10 @@ In order to activate those plugins featues, you must edit your `ux0:tai/config.t
 
 ```
 *KERNEL
-ux0:tai/dsmotion.skprx
+ux0:tai/ds34motion.skprx
 
 *TITLEID00
-ux0:tai/dsmotion.suprx
+ux0:tai/ds34motion.suprx
 ```
 
 Replace **TITLEID00** by a title identifier which needs motion control or by **ALL** to affect all titles.

@@ -1,4 +1,4 @@
-dsmotion:
+ds34motion:
   attributes: 0
   version:
     major: 1
@@ -7,7 +7,7 @@ dsmotion:
     start: module_start
     stop: module_stop
   modules:
-    DSMotionKernelLibrary:
+    DS34MotionKernelLibrary:
       syscall: true
       functions:
         - dsMotionStartSampling
