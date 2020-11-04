@@ -10,7 +10,6 @@ dsmotion:
     DSMotionKernelLibrary:
       syscall: true
       functions:
-        - dsGetCurrentTimestamp
-        - dsGetCurrentCounter
-        - dsGetSampledAccelGyro
-        - dsGetInstantAccelGyro
+        - dsMotionStartSampling
+        - dsMotionGetState
+        - dsMotionGetSensorState
