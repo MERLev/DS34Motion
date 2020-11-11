@@ -44,6 +44,8 @@ static SceFQuaternion identityQuat = {0.f, 0.f, 0.f, 1.f};
 static unsigned int initTimestamp;
 static unsigned int initCounter;
 
+static SceUID mutex_bt_uid = -1;
+
 extern unsigned int ksceKernelGetSystemTimeLow();
 
 #define SONY_VID 0x054C
@@ -417,7 +419,7 @@ int dsGetInstantAccelGyro(unsigned int iIndex, struct accelGyroData* oData)
 
 int dsMotionGetState(SceMotionState *ms)
 {
-	SceMotionState motionState;
+    SceMotionState motionState;
 	memset(&motionState, 0, sizeof(motionState));
     signed short accel[3];
     signed short gyro[3];
@@ -510,7 +512,7 @@ int dsMotionGetSensorState(SceMotionSensorState *sensorState, int numRecords){
 			ksceKernelMemcpyKernelToUser((uintptr_t)&sensorState[i], (const void *)&curState, sizeof(curState));
         }
     }
-	return 0;
+    return 0;
 }
 
 int dsMotionStartSampling(){
@@ -590,6 +592,8 @@ DECL_FUNC_HOOK(SceBt_ksceBtReadEvent, SceBtEvent *events, int num_events)
             }
             else if ((ds3_connected || ds4_connected) && event->mac0 == ds_mac0 && event->mac1 == ds_mac1)
             {
+                ksceKernelLockMutex(mutex_bt_uid, 1, NULL);
+
                 if (0x06 == event->id)
                 {
                     ds3_connected = 0;
@@ -640,6 +644,8 @@ DECL_FUNC_HOOK(SceBt_ksceBtReadEvent, SceBtEvent *events, int num_events)
                     else if (0x0B == event->id || 0x0C == event->id)
                         recv_buff = NULL;
                 }
+                
+                ksceKernelUnlockMutex(mutex_bt_uid, 1);
             }
         }
 	}
@@ -653,10 +659,14 @@ DECL_FUNC_HOOK(SceBt_ksceBtHidTransfer, unsigned int mac0, unsigned int mac1, Sc
 
     if (ret >= 0 && (ds3_connected || ds4_connected) && mac0 == ds_mac0 && mac1 == ds_mac1)
     {
+        ksceKernelLockMutex(mutex_bt_uid, 1, NULL);
+
         if (NULL != request && NULL != request->buffer && request->length >= (ds4_connected?sizeof(ds4_input):sizeof(ds3_input)))
             recv_buff = (unsigned char*)request->buffer;
         else
             recv_buff = NULL;
+
+        ksceKernelUnlockMutex(mutex_bt_uid, 1);
     }
     
     return ret;
@@ -682,6 +692,9 @@ int module_start(SceSize argc, const void *args)
 		//LOG("Error finding SceBt module\n");
 		goto error_find_scebt;
 	}
+
+    // mutex_ds_motion_state_uid = ksceKernelCreateMutex("mutex_ds_motion_state", 0, 0, NULL);
+    mutex_bt_uid = ksceKernelCreateMutex("mutex_bt", 0, 0, NULL);
 
 	/* SceBt hooks */
 	BIND_FUNC_EXPORT_HOOK(SceBt_ksceBtReadEvent, KERNEL_PID, "SceBt", TAI_ANY_LIBRARY, 0x5ABB9A9D);
@@ -714,6 +727,9 @@ int module_stop(SceSize argc, const void *args)
     UNBIND_FUNC_HOOK(SceBt_ksceBtHidTransfer);
 
 	//log_flush();
+    if (mutex_bt_uid >= 0){
+        ksceKernelDeleteMutex(mutex_bt_uid);
+    }
 
 	return SCE_KERNEL_STOP_SUCCESS;
 }
