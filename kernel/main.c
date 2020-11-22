@@ -638,8 +638,8 @@ DECL_FUNC_HOOK(SceBt_ksceBtReadEvent, SceBtEvent *events, int num_events)
                             data->timestamp = ksceKernelGetSystemTimeLow();
                             data->counter = (++globalCounter);
                             currentData = newData;
+							recv_buff = NULL;
                         }
-                        recv_buff = NULL;
                     }
                     else if (0x0B == event->id || 0x0C == event->id)
                         recv_buff = NULL;
