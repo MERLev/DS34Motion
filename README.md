@@ -1,4 +1,5 @@
 # DS34Motion
+The only difference from DSMotion is reVita compatibility.
 
 Henkaku plugins which adds motion control support for PlayStation TV with DualShock controllers
 
